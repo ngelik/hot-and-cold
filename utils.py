@@ -1,6 +1,8 @@
 import requests
 from datetime import datetime
 import streamlit as st
+import trafilatura
+from bs4 import BeautifulSoup
 
 def celsius_to_fahrenheit(celsius):
     """Convert temperature from Celsius to Fahrenheit"""
@@ -16,78 +18,91 @@ def format_temperature(temp, unit='F'):
 
 def get_global_temperatures():
     """
-    Fetch temperature data from major US cities using the National Weather Service API
+    Fetch temperature data from major cities around the world using TimeAndDate.com
     Returns tuple of (hottest_place, coldest_place) or None if error occurs
     """
-    # List of major US cities with their coordinates
-    cities = [
-        {"name": "Miami, FL", "lat": "25.7617", "lon": "-80.1918"},
-        {"name": "Phoenix, AZ", "lat": "33.4484", "lon": "-112.0740"},
-        {"name": "Los Angeles, CA", "lat": "34.0522", "lon": "-118.2437"},
-        {"name": "Las Vegas, NV", "lat": "36.1699", "lon": "-115.1398"},
-        {"name": "Houston, TX", "lat": "29.7604", "lon": "-95.3698"},
-        {"name": "Denver, CO", "lat": "39.7392", "lon": "-104.9903"},
-        {"name": "Chicago, IL", "lat": "41.8781", "lon": "-87.6298"},
-        {"name": "New York, NY", "lat": "40.7128", "lon": "-74.0060"},
-        {"name": "Boston, MA", "lat": "42.3601", "lon": "-71.0589"},
-        {"name": "Minneapolis, MN", "lat": "44.9778", "lon": "-93.2650"},
-        {"name": "Anchorage, AK", "lat": "61.2181", "lon": "-149.9003"},
-        {"name": "Honolulu, HI", "lat": "21.3069", "lon": "-157.8583"}
-    ]
-
-    base_url = "https://api.weather.gov/points"
+    url = "https://www.timeanddate.com/weather/?sort=temp"
     headers = {
-        "User-Agent": "(myweatherapp.com, contact@myweatherapp.com)",
-        "Accept": "application/json"
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
     }
 
     hottest_place = {"temp": float('-inf'), "name": "", "temp_f": 0}
     coldest_place = {"temp": float('inf'), "name": "", "temp_f": 0}
 
     try:
-        for city in cities:
+        response = requests.get(url, headers=headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+
+        # Find the weather table
+        table = soup.find('table', {'class': 'zebra'})
+        if not table:
+            st.error("Could not find the weather table on the page")
+            return None
+
+        rows = table.find_all('tr')[1:]  # Skip header row
+
+        for row in rows:
             try:
-                # Get the forecast office URL for the location
-                point_url = f"{base_url}/{city['lat']},{city['lon']}"
-                response = requests.get(point_url, headers=headers)
-                response.raise_for_status()
-                point_data = response.json()
+                # Get location cells
+                cells = row.find_all('td')
+                if len(cells) < 2:
+                    continue
 
-                # Get the forecast data
-                forecast_url = point_data['properties']['forecast']
-                response = requests.get(forecast_url, headers=headers)
-                response.raise_for_status()
-                forecast_data = response.json()
+                # Extract location name
+                location_cell = cells[0]
+                location_link = location_cell.find('a')
+                if not location_link:
+                    continue
 
-                # Get current temperature from the first period
-                temp = float(forecast_data['properties']['periods'][0]['temperature'])
+                location_text = location_link.text.strip()
+                city = location_text
+                country = ""
+                if ',' in location_text:
+                    city, country = location_text.split(',', 1)
 
-                if temp > hottest_place["temp"]:
-                    hottest_place = {
-                        "temp": temp,
-                        "name": city["name"],
-                        "temp_f": temp,
-                        "country": "US"
-                    }
+                # Extract temperature
+                temp_cell = cells[1]
+                if not temp_cell:
+                    continue
 
-                if temp < coldest_place["temp"]:
-                    coldest_place = {
-                        "temp": temp,
-                        "name": city["name"],
-                        "temp_f": temp,
-                        "country": "US"
-                    }
+                temp_text = temp_cell.text.strip().replace('°C', '').strip()
+                try:
+                    temp_c = float(temp_text)
+                    temp_f = celsius_to_fahrenheit(temp_c)
 
-            except requests.RequestException as e:
-                st.warning(f"Couldn't fetch data for {city['name']}: {str(e)}")
+                    if temp_f > hottest_place["temp"]:
+                        hottest_place = {
+                            "temp": temp_f,
+                            "name": city.strip(),
+                            "temp_f": temp_f,
+                            "country": country.strip()
+                        }
+
+                    if temp_f < coldest_place["temp"]:
+                        coldest_place = {
+                            "temp": temp_f,
+                            "name": city.strip(),
+                            "temp_f": temp_f,
+                            "country": country.strip()
+                        }
+                except ValueError:
+                    st.warning(f"Could not parse temperature for {city}: {temp_text}")
+                    continue
+
+            except Exception as e:
+                st.warning(f"Error processing row: {str(e)}")
                 continue
 
         if hottest_place["name"] and coldest_place["name"]:
             return hottest_place, coldest_place
         else:
-            st.error("Could not fetch temperature data for any cities")
+            st.error("Could not find temperature data for any cities")
             return None
 
+    except requests.RequestException as e:
+        st.error(f"Error fetching data: {str(e)}")
+        return None
     except Exception as e:
         st.error(f"Error processing weather data: {str(e)}")
         return None
