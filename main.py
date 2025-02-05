@@ -23,10 +23,6 @@ def main():
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.markdown(f"Last updated: {current_time}")
 
-    # Add auto-refresh button
-    if st.button("🔄 Refresh Data"):
-        st.experimental_rerun()
-
     # Create two columns for hot and cold temperatures
     col1, col2 = st.columns(2)
 
@@ -47,15 +43,6 @@ def main():
             with col2:
                 st.markdown("### ❄️ Coldest Place")
                 display_temperature_card(coldest_place, "cold")
-
-            # Add information about data source
-            st.markdown("---")
-            st.markdown(
-                """
-                Data provided by OpenWeatherMap API  
-                Note: Data is sampled from major cities around the world
-                """
-            )
         else:
             st.error("Unable to fetch temperature data. Please try again later.")
 
