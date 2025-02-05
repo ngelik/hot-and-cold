@@ -363,7 +363,7 @@ export const fetchMajorCities = async () => {
   return MAJOR_CITIES;
 };
 
-// Function to simulate fetching temperature data
+// Function to fetch temperature data
 export const fetchCityTemperature = async (city) => {
   try {
     const baseUrl = "https://api.open-meteo.com/v1/forecast";
