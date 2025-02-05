@@ -365,16 +365,32 @@ export const fetchMajorCities = async () => {
 
 // Function to simulate fetching temperature data
 export const fetchCityTemperature = async (city) => {
-  // For now, returning random temperature data
-  const randomTemp = Math.floor(Math.random() * 35) + 5; // Random temp between 5-40°C
-  const currentTime = new Date().toLocaleTimeString();
-  
-  return {
-    ...city,
-    temperature: randomTemp,
-    time: currentTime,
-    location: `${city.name}, ${city.country}`
-  };
+  try {
+    const baseUrl = "https://api.open-meteo.com/v1/forecast";
+    const params = new URLSearchParams({
+      latitude: city.lat.toString(),
+      longitude: city.lon.toString(),
+      current: "temperature_2m",
+      timezone: "auto"
+    });
+    
+    const response = await fetch(`${baseUrl}?${params}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data for ${city.name}`);
+    }
+    
+    const data = await response.json();
+    
+    return {
+      ...city,
+      temperature: data.current.temperature_2m,
+      time: new Date(data.current.time).toLocaleString(),
+      location: `${city.name}, ${city.country}`
+    };
+  } catch (error) {
+    console.error(`Error fetching temperature for ${city.name}:`, error);
+    throw error;
+  }
 };
 
 export async function getGlobalTemperatures() {

@@ -88,7 +88,7 @@ function App() {
         <div className="regions-grid">
           {Object.values(REGIONS).map((region) => (
             <section key={region} className="region-section">
-              <h2 className="region-title">{region.replace('_', ' ')}</h2>
+              <h2 className="region-title">{region.replace(/_/g, ' ').toLowerCase()}</h2>
               <div className="extremes-grid">
                 <div className={`city-card hot ${getTemperatureClass(cities[region]?.hottest.temperature)}`}>
                   <div className="extreme-label">🔥 Hottest</div>

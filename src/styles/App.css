@@ -16,7 +16,7 @@ header {
 
 .regions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 2rem;
   padding: 1rem;
 }
@@ -31,6 +31,14 @@ header {
   text-align: center;
   margin-bottom: 1rem;
   color: #333;
+}
+
+.region-title {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+  text-transform: capitalize;
+  white-space: nowrap;
 }
 
 .temperature-grid {
@@ -54,16 +62,22 @@ header {
 .extremes-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .city-card {
   background-color: white;
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.6rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
   text-align: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s;
+  min-width: 0;
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
 }
 
 .city-card:hover {
@@ -81,7 +95,7 @@ header {
 }
 
 .extreme-label {
-  font-size: 0.9em;
+  font-size: 0.7em;
   font-weight: 600;
   color: #666;
   margin-bottom: 0.5rem;
@@ -89,18 +103,22 @@ header {
 
 .city-name {
   margin: 0.5rem 0;
-  font-size: 1.2em;
+  font-size: 0.85em;
   color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 0.5rem;
 }
 
 .city-info {
   margin: 0.25rem 0;
-  font-size: 0.9em;
+  font-size: 0.7em;
   color: #666;
 }
 
 .temperature {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: bold;
   margin: 0.5rem 0;
   color: #333;
