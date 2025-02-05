@@ -12,6 +12,10 @@ export const REGIONS = {
   OCEANIA: 'OCEANIA'
 };
 
+// Cache constants
+const CACHE_KEY = 'temperatureData';
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+
 // List of cities with 50 per region
 const MAJOR_CITIES = [
   // ASIA (50 cities)
@@ -355,6 +359,40 @@ export const fetchMajorCities = async () => {
   return MAJOR_CITIES;
 };
 
+// Function to get cached data
+const getCachedData = () => {
+  try {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (!cached) return null;
+
+    const { timestamp, data } = JSON.parse(cached);
+    const now = new Date().getTime();
+
+    if (now - timestamp > CACHE_DURATION) {
+      localStorage.removeItem(CACHE_KEY);
+      return null;
+    }
+
+    return data;
+  } catch (error) {
+    console.warn('Error reading from cache:', error);
+    return null;
+  }
+};
+
+// Function to set cached data
+const setCachedData = (data) => {
+  try {
+    const cacheData = {
+      timestamp: new Date().getTime(),
+      data
+    };
+    localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+  } catch (error) {
+    console.warn('Error writing to cache:', error);
+  }
+};
+
 // Function to fetch temperature data
 export const fetchCityTemperature = async (city) => {
   try {
@@ -385,73 +423,51 @@ export const fetchCityTemperature = async (city) => {
   }
 };
 
-export async function getGlobalTemperatures() {
+// Function to get temperatures with caching
+export const getTemperaturesWithCache = async () => {
   try {
-    const cities = await fetchMajorCities();
-    
-    if (!cities.length) {
-      throw new Error("Failed to fetch city list");
+    // Try to get cached data first
+    const cachedData = getCachedData();
+    if (cachedData) {
+      console.log('Using cached temperature data');
+      return cachedData;
     }
 
-    console.log(`Processing temperatures for ${cities.length} cities...`);
+    // If no cache, fetch fresh data
+    console.log('Fetching fresh temperature data');
+    const cities = await fetchMajorCities();
+    const citiesWithTemp = await Promise.all(
+      cities.map(city => fetchCityTemperature(city))
+    );
 
-    // Initialize extremes for each region
-    const regionExtremes = Object.values(REGIONS).reduce((acc, region) => {
-      acc[region] = {
-        hottest: { temperature: -Infinity },
-        coldest: { temperature: Infinity }
-      };
+    // Group cities by region and find extremes
+    const groupedExtremes = citiesWithTemp.reduce((acc, city) => {
+      if (!acc[city.region]) {
+        acc[city.region] = {
+          hottest: { temperature: -Infinity },
+          coldest: { temperature: Infinity }
+        };
+      }
+      
+      if (city.temperature > acc[city.region].hottest.temperature) {
+        acc[city.region].hottest = city;
+      }
+      if (city.temperature < acc[city.region].coldest.temperature) {
+        acc[city.region].coldest = city;
+      }
+      
       return acc;
     }, {});
 
-    // Process cities in batches
-    const batchSize = 5;
-    const results = [];
+    // Cache the results
+    setCachedData(groupedExtremes);
     
-    for (let i = 0; i < cities.length; i += batchSize) {
-      const batch = cities.slice(i, i + batchSize);
-      const batchPromises = batch.map(city => 
-        fetchCityTemperature(city)
-          .catch(error => {
-            console.warn(`Error fetching data for ${city.name}:`, error);
-            return null;
-          })
-      );
-
-      const batchResults = await Promise.all(batchPromises);
-      results.push(...batchResults.filter(result => result !== null));
-
-      console.log(`Processed ${Math.min(i + batchSize, cities.length)}/${cities.length} cities`);
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
-    
-    // Find extremes for each region
-    results.forEach(cityData => {
-      if (!cityData || !cityData.region) return;
-      
-      const regionData = regionExtremes[cityData.region];
-      if (cityData.temperature > regionData.hottest.temperature) {
-        regionData.hottest = cityData;
-      }
-      if (cityData.temperature < regionData.coldest.temperature) {
-        regionData.coldest = cityData;
-      }
-    });
-
-    // Validate results
-    Object.values(REGIONS).forEach(region => {
-      if (regionExtremes[region].hottest.temperature === -Infinity ||
-          regionExtremes[region].coldest.temperature === Infinity) {
-        console.warn(`No valid temperature data for region: ${region}`);
-      }
-    });
-
-    return regionExtremes;
+    return groupedExtremes;
   } catch (error) {
-    console.error('Error fetching temperature data:', error);
-    return null;
+    console.error('Error getting temperatures:', error);
+    throw error;
   }
-}
+};
 
 function getRegionExtremes() {
   const regionExtremes = {};

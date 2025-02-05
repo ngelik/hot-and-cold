@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { REGIONS, fetchMajorCities, fetchCityTemperature } from './utils';
+import { REGIONS, getTemperaturesWithCache } from './utils';
 import './styles/App.css';
 
 function App() {
@@ -23,34 +23,9 @@ function App() {
   useEffect(() => {
     const loadCities = async () => {
       try {
-        const allCities = await fetchMajorCities();
-        const citiesWithTemp = await Promise.all(
-          allCities.map(async (city) => {
-            const tempData = await fetchCityTemperature(city);
-            return tempData;
-          })
-        );
-        
-        // Group cities by region and find extremes
-        const groupedExtremes = citiesWithTemp.reduce((acc, city) => {
-          if (!acc[city.region]) {
-            acc[city.region] = {
-              hottest: { temperature: -Infinity },
-              coldest: { temperature: Infinity }
-            };
-          }
-          
-          if (city.temperature > acc[city.region].hottest.temperature) {
-            acc[city.region].hottest = city;
-          }
-          if (city.temperature < acc[city.region].coldest.temperature) {
-            acc[city.region].coldest = city;
-          }
-          
-          return acc;
-        }, {});
-        
-        setCities(groupedExtremes);
+        setLoading(true);
+        const data = await getTemperaturesWithCache();
+        setCities(data);
       } catch (error) {
         console.error('Error loading cities:', error);
         setError('Failed to load temperature data');
