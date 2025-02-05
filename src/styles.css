@@ -1,15 +1,36 @@
 /* Modern Design Variables */
 :root {
-  /* Color scheme */
+  /* Base colors */
   --primary-bg: #0f172a;
   --secondary-bg: #1e293b;
   --card-bg: rgba(30, 41, 59, 0.7);
   --primary-text: #f1f5f9;
   --secondary-text: #94a3b8;
   --accent-color: #3b82f6;
-  --success-color: #10b981;
-  --warning-color: #f59e0b;
-  --error-color: #ef4444;
+  
+  /* Extended temperature colors */
+  --temp-40-plus: #ff0000;
+  --temp-35-40: #ff4d4d;
+  --temp-30-35: #ff6b3d;
+  --temp-25-30: #ff8c1a;
+  --temp-20-25: #ffa500;
+  --temp-15-20: #3b82f6;
+  --temp-10-15: #4d94ff;
+  --temp-5-10: #0066ff;
+  --temp-0-5: #0052cc;
+  --temp-below-0: #003d99;
+  
+  /* Extended temperature backgrounds */
+  --temp-40-plus-bg: rgba(255, 0, 0, 0.15);
+  --temp-35-40-bg: rgba(255, 77, 77, 0.15);
+  --temp-30-35-bg: rgba(255, 107, 61, 0.15);
+  --temp-25-30-bg: rgba(255, 140, 26, 0.15);
+  --temp-20-25-bg: rgba(255, 165, 0, 0.15);
+  --temp-15-20-bg: rgba(59, 130, 246, 0.15);
+  --temp-10-15-bg: rgba(77, 148, 255, 0.15);
+  --temp-5-10-bg: rgba(0, 102, 255, 0.15);
+  --temp-0-5-bg: rgba(0, 82, 204, 0.15);
+  --temp-below-0-bg: rgba(0, 61, 153, 0.15);
   
   /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -21,25 +42,12 @@
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
   --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
   
   /* Border Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  
-  /* Temperature colors */
-  --temp-hot: #ff4d4d;
-  --temp-warm: #ff8c1a;
-  --temp-mild: #3b82f6;
-  --temp-cool: #4d94ff;
-  --temp-cold: #0066ff;
-  
-  /* Temperature backgrounds with glass effect */
-  --temp-hot-bg: rgba(255, 77, 77, 0.1);
-  --temp-warm-bg: rgba(255, 140, 26, 0.1);
-  --temp-mild-bg: rgba(59, 130, 246, 0.1);
-  --temp-cool-bg: rgba(77, 148, 255, 0.1);
-  --temp-cold-bg: rgba(0, 102, 255, 0.1);
 }
 
 /* Base Styles */
@@ -284,53 +292,182 @@ body {
   align-items: center;
 }
 
-/* Update city card with temperature-based styling */
+/* Regions Grid */
+.regions-grid {
+  display: grid;
+  gap: var(--spacing-xl);
+  padding: var(--spacing-md);
+}
+
+/* Region Section with strong separation */
+.region-section {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  margin-bottom: var(--spacing-xl);
+  position: relative;
+}
+
+/* Enhanced Region Title */
+.region-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--accent-color);
+  text-align: center;
+  background: linear-gradient(to right, var(--accent-color), #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.region-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(to right, var(--accent-color), #60a5fa);
+}
+
+/* Region Divider */
+.region-section:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: calc(var(--spacing-xl) * -0.5);
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--glass-border),
+    transparent
+  );
+}
+
+/* City Grid */
+.city-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm);
+}
+
+/* City Card with Temperature Colors */
 .city-card {
   position: relative;
   overflow: hidden;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.city-card.temp-hot {
-  background: var(--temp-hot-bg);
-  border-color: var(--temp-hot);
+/* Temperature-based card styles */
+.city-card.temp-40-plus {
+  background: var(--temp-40-plus-bg);
+  border: 1px solid var(--temp-40-plus);
 }
 
-.city-card.temp-warm {
-  background: var(--temp-warm-bg);
-  border-color: var(--temp-warm);
+.city-card.temp-35-40 {
+  background: var(--temp-35-40-bg);
+  border: 1px solid var(--temp-35-40);
 }
 
-.city-card.temp-mild {
-  background: var(--temp-mild-bg);
-  border-color: var(--temp-mild);
+.city-card.temp-30-35 {
+  background: var(--temp-30-35-bg);
+  border: 1px solid var(--temp-30-35);
 }
 
-.city-card.temp-cool {
-  background: var(--temp-cool-bg);
-  border-color: var(--temp-cool);
+.city-card.temp-25-30 {
+  background: var(--temp-25-30-bg);
+  border: 1px solid var(--temp-25-30);
 }
 
-.city-card.temp-cold {
-  background: var(--temp-cold-bg);
-  border-color: var(--temp-cold);
+.city-card.temp-20-25 {
+  background: var(--temp-20-25-bg);
+  border: 1px solid var(--temp-20-25);
 }
 
-.city-card.temp-hot .temperature {
-  color: var(--temp-hot);
+.city-card.temp-15-20 {
+  background: var(--temp-15-20-bg);
+  border: 1px solid var(--temp-15-20);
 }
 
-.city-card.temp-warm .temperature {
-  color: var(--temp-warm);
+.city-card.temp-10-15 {
+  background: var(--temp-10-15-bg);
+  border: 1px solid var(--temp-10-15);
 }
 
-.city-card.temp-mild .temperature {
-  color: var(--temp-mild);
+.city-card.temp-5-10 {
+  background: var(--temp-5-10-bg);
+  border: 1px solid var(--temp-5-10);
 }
 
-.city-card.temp-cool .temperature {
-  color: var(--temp-cool);
+.city-card.temp-0-5 {
+  background: var(--temp-0-5-bg);
+  border: 1px solid var(--temp-0-5);
 }
 
-.city-card.temp-cold .temperature {
-  color: var(--temp-cold);
+.city-card.temp-below-0 {
+  background: var(--temp-below-0-bg);
+  border: 1px solid var(--temp-below-0);
+}
+
+/* Temperature text colors */
+.city-card.temp-40-plus .temperature { color: var(--temp-40-plus); }
+.city-card.temp-35-40 .temperature { color: var(--temp-35-40); }
+.city-card.temp-30-35 .temperature { color: var(--temp-30-35); }
+.city-card.temp-25-30 .temperature { color: var(--temp-25-30); }
+.city-card.temp-20-25 .temperature { color: var(--temp-20-25); }
+.city-card.temp-15-20 .temperature { color: var(--temp-15-20); }
+.city-card.temp-10-15 .temperature { color: var(--temp-10-15); }
+.city-card.temp-5-10 .temperature { color: var(--temp-5-10); }
+.city-card.temp-0-5 .temperature { color: var(--temp-0-5); }
+.city-card.temp-below-0 .temperature { color: var(--temp-below-0); }
+
+/* Card Content Styles */
+.city-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--primary-text);
+}
+
+.temperature {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: var(--spacing-xs) 0;
+  text-align: center;
+}
+
+.city-info {
+  color: var(--secondary-text);
+  font-size: 0.875rem;
+}
+
+/* Hover Effects */
+.city-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--glass-shadow);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .region-title {
+    font-size: 1.5rem;
+  }
+  
+  .city-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+  
+  .temperature {
+    font-size: 2rem;
+  }
 } 

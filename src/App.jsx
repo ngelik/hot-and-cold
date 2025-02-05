@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { REGIONS, fetchMajorCities, fetchCityTemperature } from './utils';
-import TemperatureCard from './components/TemperatureCard';
 import './styles/App.css';
 
 function App() {
@@ -9,11 +8,16 @@ function App() {
   const [error, setError] = useState(null);
 
   const getTemperatureClass = (temp) => {
-    if (temp >= 35) return 'temp-hot';
-    if (temp >= 25) return 'temp-warm';
-    if (temp >= 15) return 'temp-mild';
-    if (temp >= 5) return 'temp-cool';
-    return 'temp-cold';
+    if (temp >= 40) return 'temp-40-plus';
+    if (temp >= 35) return 'temp-35-40';
+    if (temp >= 30) return 'temp-30-35';
+    if (temp >= 25) return 'temp-25-30';
+    if (temp >= 20) return 'temp-20-25';
+    if (temp >= 15) return 'temp-15-20';
+    if (temp >= 10) return 'temp-10-15';
+    if (temp >= 5) return 'temp-5-10';
+    if (temp >= 0) return 'temp-0-5';
+    return 'temp-below-0';
   };
 
   useEffect(() => {
@@ -27,18 +31,29 @@ function App() {
           })
         );
         
-        // Group cities by region
-        const groupedCities = citiesWithTemp.reduce((acc, city) => {
+        // Group cities by region and find extremes
+        const groupedExtremes = citiesWithTemp.reduce((acc, city) => {
           if (!acc[city.region]) {
-            acc[city.region] = [];
+            acc[city.region] = {
+              hottest: { temperature: -Infinity },
+              coldest: { temperature: Infinity }
+            };
           }
-          acc[city.region].push(city);
+          
+          if (city.temperature > acc[city.region].hottest.temperature) {
+            acc[city.region].hottest = city;
+          }
+          if (city.temperature < acc[city.region].coldest.temperature) {
+            acc[city.region].coldest = city;
+          }
+          
           return acc;
         }, {});
         
-        setCities(groupedCities);
+        setCities(groupedExtremes);
       } catch (error) {
         console.error('Error loading cities:', error);
+        setError('Failed to load temperature data');
       } finally {
         setLoading(false);
       }
@@ -74,19 +89,21 @@ function App() {
           {Object.values(REGIONS).map((region) => (
             <section key={region} className="region-section">
               <h2 className="region-title">{region.replace('_', ' ')}</h2>
-              <div className="city-grid">
-                {cities[region]?.map((city, index) => (
-                  <div 
-                    key={`${city.name}-${index}`} 
-                    className={`city-card ${getTemperatureClass(city.temperature)}`}
-                  >
-                    <h3 className="city-name">{city.name}</h3>
-                    <p className="city-info">{city.country}</p>
-                    <div className="temperature">{Math.round(city.temperature)}°C</div>
-                    <p className="city-info">Lat: {city.lat}, Lon: {city.lon}</p>
-                    <p className="city-info">Updated: {city.time}</p>
-                  </div>
-                ))}
+              <div className="extremes-grid">
+                <div className={`city-card hot ${getTemperatureClass(cities[region]?.hottest.temperature)}`}>
+                  <div className="extreme-label">🔥 Hottest</div>
+                  <h3 className="city-name">{cities[region]?.hottest.name}</h3>
+                  <p className="city-info">{cities[region]?.hottest.country}</p>
+                  <div className="temperature">{Math.round(cities[region]?.hottest.temperature)}°C</div>
+                  <p className="city-info">Updated: {cities[region]?.hottest.time}</p>
+                </div>
+                <div className={`city-card cold ${getTemperatureClass(cities[region]?.coldest.temperature)}`}>
+                  <div className="extreme-label">❄️ Coldest</div>
+                  <h3 className="city-name">{cities[region]?.coldest.name}</h3>
+                  <p className="city-info">{cities[region]?.coldest.country}</p>
+                  <div className="temperature">{Math.round(cities[region]?.coldest.temperature)}°C</div>
+                  <p className="city-info">Updated: {cities[region]?.coldest.time}</p>
+                </div>
               </div>
             </section>
           ))}

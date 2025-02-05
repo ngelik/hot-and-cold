@@ -7,5 +7,6 @@ export default defineConfig({
     port: 3001,
     host: true,
     open: true
-  }
+  },
+  base: '/hot-and-cold/'
 }); 

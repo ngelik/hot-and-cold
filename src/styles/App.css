@@ -49,4 +49,71 @@ header {
   color: #ff0000;
   text-align: center;
   padding: 20px;
-} 
+}
+
+.extremes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.city-card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.city-card:hover {
+  transform: translateY(-2px);
+}
+
+.city-card.hot {
+  background: linear-gradient(to bottom right, #fff5f5, #fff);
+  border: 1px solid #ffcccc;
+}
+
+.city-card.cold {
+  background: linear-gradient(to bottom right, #f5f9ff, #fff);
+  border: 1px solid #cce4ff;
+}
+
+.extreme-label {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.city-name {
+  margin: 0.5rem 0;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.city-info {
+  margin: 0.25rem 0;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.temperature {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0.5rem 0;
+  color: #333;
+}
+
+/* Temperature color classes */
+.temp-40-plus { color: #d00; }
+.temp-35-40 { color: #e30; }
+.temp-30-35 { color: #f60; }
+.temp-25-30 { color: #f90; }
+.temp-20-25 { color: #fc0; }
+.temp-15-20 { color: #99c; }
+.temp-10-15 { color: #69c; }
+.temp-5-10 { color: #39f; }
+.temp-0-5 { color: #09f; }
+.temp-below-0 { color: #06f; } 
