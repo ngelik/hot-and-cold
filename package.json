@@ -1,5 +1,6 @@
 {
   "name": "global-temperature-extremes",
+  "homepage": "https://ngelik.github.io/hot-and-cold",
   "private": true,
   "version": "0.1.0",
   "type": "module",
@@ -7,7 +8,9 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite --host"
+    "start": "vite --host",
+    "predeploy": "pnpm run build",
+    "deploy": "gh-pages -d build"    
   },
   "dependencies": {
     "react": "^18.2.0",

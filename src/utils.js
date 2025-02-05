@@ -2,14 +2,14 @@
 const celsiusToFahrenheit = (celsius) => (celsius * 9/5) + 32;
 const fahrenheitToCelsius = (fahrenheit) => (fahrenheit - 32) * 5/9;
 
-// Define regions
-const REGIONS = {
-  ASIA: 'Asia',
-  EUROPE: 'Europe',
-  NORTH_AMERICA: 'North America',
-  SOUTH_AMERICA: 'South America',
-  AFRICA: 'Africa',
-  OCEANIA: 'Oceania'
+// Constants for regions
+export const REGIONS = {
+  ASIA: 'ASIA',
+  EUROPE: 'EUROPE',
+  NORTH_AMERICA: 'NORTH_AMERICA',
+  SOUTH_AMERICA: 'SOUTH_AMERICA',
+  AFRICA: 'AFRICA',
+  OCEANIA: 'OCEANIA'
 };
 
 // List of cities with 50 per region
@@ -203,34 +203,23 @@ const MAJOR_CITIES = [
 ];
 
 // Function to fetch cities
-async function fetchMajorCities() {
+export const fetchMajorCities = async () => {
   return MAJOR_CITIES;
-}
+};
 
-async function fetchCityTemperature(city) {
-  const baseUrl = "https://api.open-meteo.com/v1/forecast";
-  const params = new URLSearchParams({
-    latitude: city.lat.toString(),
-    longitude: city.lon.toString(),
-    current_weather: "true",
-    temperature_unit: "celsius",
-    timezone: "auto"
-  });
-
-  const response = await fetch(`${baseUrl}?${params}`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch data for ${city.name}`);
-  }
+// Function to simulate fetching temperature data
+export const fetchCityTemperature = async (city) => {
+  // For now, returning random temperature data
+  const randomTemp = Math.floor(Math.random() * 35) + 5; // Random temp between 5-40°C
+  const currentTime = new Date().toLocaleTimeString();
   
-  const data = await response.json();
   return {
-    name: city.name,
-    temperature: data.current_weather.temperature,
-    location: `${city.name}, ${city.country}`,
-    time: new Date(data.current_weather.time).toLocaleString(),
-    region: city.region
+    ...city,
+    temperature: randomTemp,
+    time: currentTime,
+    location: `${city.name}, ${city.country}`
   };
-}
+};
 
 export async function getGlobalTemperatures() {
   try {

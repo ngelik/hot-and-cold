@@ -26,6 +26,20 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  
+  /* Temperature colors */
+  --temp-hot: #ff4d4d;
+  --temp-warm: #ff8c1a;
+  --temp-mild: #3b82f6;
+  --temp-cool: #4d94ff;
+  --temp-cold: #0066ff;
+  
+  /* Temperature backgrounds with glass effect */
+  --temp-hot-bg: rgba(255, 77, 77, 0.1);
+  --temp-warm-bg: rgba(255, 140, 26, 0.1);
+  --temp-mild-bg: rgba(59, 130, 246, 0.1);
+  --temp-cool-bg: rgba(77, 148, 255, 0.1);
+  --temp-cold-bg: rgba(0, 102, 255, 0.1);
 }
 
 /* Base Styles */
@@ -268,4 +282,55 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Update city card with temperature-based styling */
+.city-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.city-card.temp-hot {
+  background: var(--temp-hot-bg);
+  border-color: var(--temp-hot);
+}
+
+.city-card.temp-warm {
+  background: var(--temp-warm-bg);
+  border-color: var(--temp-warm);
+}
+
+.city-card.temp-mild {
+  background: var(--temp-mild-bg);
+  border-color: var(--temp-mild);
+}
+
+.city-card.temp-cool {
+  background: var(--temp-cool-bg);
+  border-color: var(--temp-cool);
+}
+
+.city-card.temp-cold {
+  background: var(--temp-cold-bg);
+  border-color: var(--temp-cold);
+}
+
+.city-card.temp-hot .temperature {
+  color: var(--temp-hot);
+}
+
+.city-card.temp-warm .temperature {
+  color: var(--temp-warm);
+}
+
+.city-card.temp-mild .temperature {
+  color: var(--temp-mild);
+}
+
+.city-card.temp-cool .temperature {
+  color: var(--temp-cool);
+}
+
+.city-card.temp-cold .temperature {
+  color: var(--temp-cold);
 } 
