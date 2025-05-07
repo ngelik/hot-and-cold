@@ -470,4 +470,106 @@ body {
   .temperature {
     font-size: 2rem;
   }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75); /* Darker overlay */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px); /* Add blur to background */
+}
+
+.modal-content {
+  background: var(--secondary-bg, #1e293b);
+  padding: var(--spacing-lg, 2rem);
+  border-radius: var(--radius-lg, 16px);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.36));
+  color: var(--primary-text, #f1f5f9);
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+  text-align: left;
+  animation: fadeInModal 0.3s ease-out;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-close-button {
+  position: absolute;
+  top: var(--spacing-sm, 1rem);
+  right: var(--spacing-sm, 1rem);
+  background: transparent;
+  border: none;
+  color: var(--primary-text, #f1f5f9);
+  font-size: 1.8rem; /* Larger close button */
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.modal-close-button:hover {
+  color: var(--accent-color, #3b82f6);
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  margin-bottom: var(--spacing-md, 1.5rem);
+  color: var(--accent-color, #3b82f6);
+  font-size: 1.75rem;
+}
+
+.modal-content p {
+  margin-bottom: var(--spacing-sm, 1rem);
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+.modal-content p strong {
+  color: var(--secondary-text, #94a3b8);
+}
+
+.city-preview-placeholder {
+  margin-top: var(--spacing-md, 1.5rem);
+  padding: var(--spacing-lg, 2rem);
+  background-color: rgba(0,0,0,0.2); /* Darker placeholder for contrast */
+  border-radius: var(--radius-md, 12px);
+  text-align: center;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--glass-border, rgba(255, 255, 255, 0.1));
+}
+
+.city-preview-placeholder p {
+  color: var(--secondary-text, #94a3b8);
+  font-style: italic;
+}
+
+.city-preview-image {
+  max-width: 100%;
+  max-height: 200px; /* Limit image height */
+  border-radius: var(--radius-sm, 8px); /* Consistent border radius */
+  object-fit: cover; /* Cover the area, might crop */
+  margin: auto; /* Center if smaller than placeholder */
+  display: block;
 } 
