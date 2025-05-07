@@ -489,13 +489,13 @@ body {
 
 .modal-content {
   background: var(--secondary-bg, #1e293b);
-  padding: var(--spacing-lg, 2rem);
+  padding: var(--spacing-xl, 3rem); /* Increased padding */
   border-radius: var(--radius-lg, 16px);
   border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
-  box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.36));
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45); /* Enhanced shadow */
   color: var(--primary-text, #f1f5f9);
   width: 90%;
-  max-width: 500px;
+  max-width: 550px; /* Slightly wider max-width */
   position: relative;
   text-align: left;
   animation: fadeInModal 0.3s ease-out;
@@ -528,48 +528,93 @@ body {
 
 .modal-close-button:hover {
   color: var(--accent-color, #3b82f6);
+  transform: scale(1.1); /* Add subtle hover effect */
 }
 
 .modal-content h2 {
   margin-top: 0;
   margin-bottom: var(--spacing-md, 1.5rem);
-  color: var(--accent-color, #3b82f6);
-  font-size: 1.75rem;
+  color: var(--primary-text, #f1f5f9); /* Brighter title */
+  font-size: 2rem; /* Larger title */
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: var(--spacing-sm);
 }
 
 .modal-content p {
   margin-bottom: var(--spacing-sm, 1rem);
-  line-height: 1.6;
+  line-height: 1.7; /* Improved line height */
   font-size: 1rem;
+  color: var(--secondary-text, #94a3b8); /* Softer text color for paragraphs */
 }
 
 .modal-content p strong {
-  color: var(--secondary-text, #94a3b8);
+  color: var(--primary-text, #f1f5f9); /* Make labels like Temperature, Quick Fact stand out */
+  font-weight: 600;
+}
+
+/* Specific styling for Quick Fact if needed */
+.modal-content p.quick-fact-text {
+  font-size: 0.95rem;
+  /* font-style: italic; */ /* Optional: if you want italic fact */
+  max-height: 150px; /* Limit height and allow scroll if fact is too long */
+  overflow-y: auto; /* Add scroll for long facts */
+  padding-right: var(--spacing-xs); /* Padding for scrollbar */
+  margin-bottom: var(--spacing-md);
+}
+
+/* Custom Scrollbar for Quick Fact in Modal */
+.modal-content p.quick-fact-text::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.modal-content p.quick-fact-text::-webkit-scrollbar-track {
+  background: var(--secondary-bg, #1e293b); /* Track color, matching modal background */
+  border-radius: var(--radius-sm, 8px);
+}
+
+.modal-content p.quick-fact-text::-webkit-scrollbar-thumb {
+  background-color: var(--accent-color, #3b82f6); /* Thumb color */
+  border-radius: var(--radius-sm, 8px);
+  border: 2px solid var(--secondary-bg, #1e293b); /* Creates padding around thumb */
+}
+
+.modal-content p.quick-fact-text::-webkit-scrollbar-thumb:hover {
+  background-color: #60a5fa; /* Slightly lighter thumb on hover */
+}
+
+/* Firefox scrollbar styling */
+.modal-content p.quick-fact-text {
+  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-color: var(--accent-color, #3b82f6) var(--secondary-bg, #1e293b); /* thumb and track color */
 }
 
 .city-preview-placeholder {
-  margin-top: var(--spacing-md, 1.5rem);
-  padding: var(--spacing-lg, 2rem);
-  background-color: rgba(0,0,0,0.2); /* Darker placeholder for contrast */
+  margin-top: var(--spacing-lg, 2rem); /* More space above preview */
+  padding: 0; /* Remove padding if image has its own */
+  background-color: var(--primary-bg, #0f172a); /* Darker, distinct background */
   border-radius: var(--radius-md, 12px);
   text-align: center;
-  min-height: 120px;
+  min-height: 200px; /* Ensure consistent height */
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px dashed var(--glass-border, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  overflow: hidden; /* To ensure image corners are rounded if image itself isn't */
 }
 
 .city-preview-placeholder p {
   color: var(--secondary-text, #94a3b8);
   font-style: italic;
+  padding: var(--spacing-md); /* Add padding if it's just text */
 }
 
 .city-preview-image {
-  max-width: 100%;
-  max-height: 200px; /* Limit image height */
-  border-radius: var(--radius-sm, 8px); /* Consistent border radius */
-  object-fit: cover; /* Cover the area, might crop */
-  margin: auto; /* Center if smaller than placeholder */
+  width: 100%; /* Make image take full width of placeholder */
+  height: 100%; /* Make image take full height of placeholder */
+  min-height: 200px; /* Match placeholder min-height */
+  object-fit: cover; /* Cover the area, will crop if aspect ratio mismatches */
   display: block;
+  border-radius: var(--radius-md); /* Ensures image corners are rounded with overflow:hidden on parent */
 } 

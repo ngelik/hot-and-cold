@@ -166,7 +166,7 @@ function App() {
             {factLoading ? (
               <p><i>Loading interesting fact...</i></p>
             ) : (
-              <p><strong>Quick Fact:</strong> {cityFact || 'No fact available.'}</p>
+              <p className="quick-fact-text"><strong>Quick Fact:</strong> {cityFact || 'No fact available.'}</p>
             )}
             <div className="city-preview-placeholder">
               {cityImageUrl ? (
