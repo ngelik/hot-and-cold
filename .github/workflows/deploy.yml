@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -16,11 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,18 +37,44 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build project
-        run: pnpm run build # This script runs 'vite build'. Output is in 'dist/'
-                           # vite.config.js base: '/hot-and-cold/' is correct.
+        run: pnpm run build # Output is in 'dist/'
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pages-artifact
+          path: ./dist
+
+  deploy:
+    needs: build # Ensures build job completes successfully first
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write      # To deploy to GitHub Pages
+      id-token: write   # To authenticate with OIDC for GitHub Pages deployment
+      contents: read    # Needed to download artifact if repository is private, good practice
+      
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: pages-artifact
+          # No path specified, defaults to workflow run directory
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload artifact
+      - name: Upload artifact to GitHub Pages
+        # This action is for deploying to Pages, it takes the artifact produced by download-artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist' # vite build output directory
+          path: . # Path to the directory downloaded by download-artifact
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4 
-        
