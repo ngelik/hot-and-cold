@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { REGIONS, getTemperaturesWithCache } from './utils';
 import './styles/App.css';
 
+const regionEmojis = {
+  [REGIONS.ASIA]: '🏯',
+  [REGIONS.EUROPE]: '🏰',
+  [REGIONS.AFRICA]: '🏜️',
+  [REGIONS.NORTH_AMERICA]: '🏞️',
+  [REGIONS.SOUTH_AMERICA]: '🦜',
+  [REGIONS.OCEANIA]: '🏝️',
+};
+
 function App() {
   const [cities, setCities] = useState({});
   const [loading, setLoading] = useState(true);
@@ -130,7 +139,10 @@ function App() {
         <div className="regions-grid">
           {Object.values(REGIONS).map((region) => (
             <section key={region} className="region-section">
-              <h2 className="region-title">{region.replace(/_/g, ' ').toLowerCase()}</h2>
+              <h2 className="region-title">
+                {regionEmojis[region] && <span className="region-emoji">{regionEmojis[region]}</span>}
+                {region.replace(/_/g, ' ').toLowerCase()}
+              </h2>
               <div className="extremes-grid">
                 <div 
                   className={`city-card hot ${getTemperatureClass(cities[region]?.hottest.temperature)}`}
