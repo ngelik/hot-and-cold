@@ -1,0 +1,56 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # Or your default branch if different
+  workflow_dispatch: # Allows manual triggering from the Actions tab
+
+permissions:
+  contents: read    # To checkout the repository
+  pages: write      # To deploy to GitHub Pages
+  id-token: write   # To authenticate with OIDC for GitHub Pages deployment
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4 
+        with:
+          version: 9 # Based on pnpm-lock.yaml lockfileVersion: '9.0'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Using a common LTS version
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm run build # This script runs 'vite build'. Output is in 'dist/'
+                           # vite.config.js base: '/hot-and-cold/' is correct.
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist' # vite build output directory
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
