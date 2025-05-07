@@ -1,119 +1,173 @@
 .app-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--spacing-lg, 2rem);
 }
 
 header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: var(--spacing-xl, 3rem);
+  padding: var(--spacing-md, 1.5rem) 0;
+  border-bottom: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
 }
 
-.last-updated {
-  color: #666;
-  font-size: 0.9em;
+header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--accent-color, #3b82f6), #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: var(--spacing-xs, 0.5rem);
+}
+
+header p {
+  font-size: 1.1rem;
+  color: var(--secondary-text, #94a3b8);
+  margin-bottom: 0;
 }
 
 .regions-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 2rem;
-  padding: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: var(--spacing-xl, 3rem);
+  padding: var(--spacing-md, 1.5rem) 0;
+}
+
+.region-section {
+  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-lg, 16px);
+  padding: var(--spacing-lg, 2rem);
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+  box-shadow: var(--glass-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.36));
 }
 
 .region-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: var(--spacing-lg, 2rem);
+  padding-bottom: var(--spacing-sm, 1rem);
+  border-bottom: 2px solid var(--accent-color, #3b82f6);
   text-align: center;
-  margin-bottom: 1rem;
-  color: #333;
   text-transform: capitalize;
-  white-space: nowrap;
+  color: var(--primary-text, #f1f5f9);
 }
 
-.loading {
+.loading,
+.error {
   text-align: center;
-  padding: 20px;
-  font-size: 1.2em;
+  padding: var(--spacing-xl, 3rem);
+  font-size: 1.2rem;
+  color: var(--primary-text, #f1f5f9);
 }
 
 .error {
-  color: #ff0000;
-  text-align: center;
-  padding: 20px;
+  color: var(--temp-40-plus, #ff0000);
+  background-color: var(--temp-40-plus-bg, rgba(255,0,0,0.1));
+  border-radius: var(--radius-md);
+  padding: var(--spacing-lg);
 }
 
 .extremes-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: var(--spacing-lg, 2rem);
 }
 
 .city-card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 0.6rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: var(--spacing-md, 1.5rem);
   text-align: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-width: 0;
   width: 100%;
-  max-width: 250px;
   margin: 0 auto;
-}
-
-.city-card:hover {
-  transform: translateY(-2px);
-}
-
-.city-card.hot {
-  background: linear-gradient(to bottom right, #fff5f5, #fff);
-  border: 1px solid #ffcccc;
-}
-
-.city-card.cold {
-  background: linear-gradient(to bottom right, #f5f9ff, #fff);
-  border: 1px solid #cce4ff;
+  position: relative;
+  overflow: hidden;
 }
 
 .extreme-label {
-  font-size: 0.7em;
+  font-size: 0.85rem;
   font-weight: 600;
-  color: #666;
-  margin-bottom: 0.5rem;
+  color: var(--secondary-text, #94a3b8);
+  margin-bottom: var(--spacing-sm, 1rem);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .city-name {
-  margin: 0.5rem 0;
-  font-size: 0.85em;
-  color: #333;
+  margin-bottom: var(--spacing-xs, 0.5rem);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-text, #f1f5f9);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding: 0 0.5rem;
 }
 
 .city-info {
-  margin: 0.25rem 0;
-  font-size: 0.7em;
-  color: #666;
+  margin-bottom: var(--spacing-sm, 1rem);
+  font-size: 0.9rem;
+  color: var(--secondary-text, #94a3b8);
 }
 
 .temperature {
-  font-size: 1.8em;
-  font-weight: bold;
-  margin: 0.5rem 0;
-  color: #333;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin: var(--spacing-sm, 1rem) 0;
+  line-height: 1;
 }
 
-/* Temperature color classes */
-.temp-40-plus { color: #d00; }
-.temp-35-40 { color: #e30; }
-.temp-30-35 { color: #f60; }
-.temp-25-30 { color: #f90; }
-.temp-20-25 { color: #fc0; }
-.temp-15-20 { color: #99c; }
-.temp-10-15 { color: #69c; }
-.temp-5-10 { color: #39f; }
-.temp-0-5 { color: #09f; }
-.temp-below-0 { color: #06f; } 
+/* Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+  .app-container {
+    padding: var(--spacing-md, 1.5rem);
+  }
+
+  header h1 {
+    font-size: 2rem; /* Reduced for mobile */
+  }
+
+  header p {
+    font-size: 1rem; /* Reduced for mobile */
+  }
+
+  .regions-grid {
+    grid-template-columns: 1fr; /* Stack regions vertically */
+    gap: var(--spacing-lg, 2rem);
+  }
+
+  .region-section {
+    padding: var(--spacing-md, 1.5rem);
+  }
+
+  .region-title {
+    font-size: 1.8rem; /* Reduced for mobile */
+    margin-bottom: var(--spacing-md, 1.5rem);
+  }
+
+  .extremes-grid {
+    grid-template-columns: 1fr; /* Stack Hottest/Coldest cards vertically */
+    gap: var(--spacing-md, 1.5rem);
+  }
+
+  .city-card {
+    padding: var(--spacing-sm, 1rem); /* Slightly reduced padding for smaller cards */
+    /* max-width: none; /* Allow cards to fill the column if needed */
+  }
+
+  .city-name {
+    font-size: 1.3rem; /* Reduced for mobile */
+  }
+
+  .temperature {
+    font-size: 2.8rem; /* Reduced for mobile */
+  }
+
+  .extreme-label {
+    font-size: 0.8rem;
+  }
+
+  .city-info {
+    font-size: 0.85rem;
+  }
+} 

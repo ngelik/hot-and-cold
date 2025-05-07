@@ -1,41 +1,41 @@
 /* Modern Design Variables */
 :root {
-  /* Base colors */
-  --primary-bg: #0f172a;
-  --secondary-bg: #1e293b;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --primary-text: #f1f5f9;
-  --secondary-text: #94a3b8;
-  --accent-color: #3b82f6;
+  /* Base colors - Light Theme */
+  --primary-bg: #ffffff; /* White */
+  --secondary-bg: #f0f2f5; /* Very light grey */
+  --card-bg: rgba(255, 255, 255, 0.75); /* Semi-transparent white for cards */
+  --primary-text: #1a202c; /* Dark Slate Grey */
+  --secondary-text: #4a5568; /* Medium Slate Grey */
+  --accent-color: #3b82f6; /* Blue - kept for now, check contrast */
   
-  /* Extended temperature colors */
-  --temp-40-plus: #ff0000;
-  --temp-35-40: #ff4d4d;
-  --temp-30-35: #ff6b3d;
-  --temp-25-30: #ff8c1a;
-  --temp-20-25: #ffa500;
-  --temp-15-20: #3b82f6;
-  --temp-10-15: #4d94ff;
-  --temp-5-10: #0066ff;
-  --temp-0-5: #0052cc;
-  --temp-below-0: #003d99;
+  /* Extended temperature colors - These are text colors, may need adjustment for contrast later */
+  --temp-40-plus: #d32f2f; /* Darker Red */
+  --temp-35-40: #e53935; /* Red */
+  --temp-30-35: #f4511e; /* Deep Orange */
+  --temp-25-30: #fb8c00; /* Orange */
+  --temp-20-25: #fdd835; /* Yellow (might need darkening if card bg is too light) */
+  --temp-15-20: #1e88e5; /* Blue */
+  --temp-10-15: #039be5; /* Light Blue */
+  --temp-5-10: #0288d1; /* Darker Light Blue */
+  --temp-0-5: #01579b; /* Dark Blue */
+  --temp-below-0: #0d47a1; /* Very Dark Blue */
   
-  /* Extended temperature backgrounds */
-  --temp-40-plus-bg: rgba(255, 0, 0, 0.15);
-  --temp-35-40-bg: rgba(255, 77, 77, 0.15);
-  --temp-30-35-bg: rgba(255, 107, 61, 0.15);
-  --temp-25-30-bg: rgba(255, 140, 26, 0.15);
-  --temp-20-25-bg: rgba(255, 165, 0, 0.15);
-  --temp-15-20-bg: rgba(59, 130, 246, 0.15);
-  --temp-10-15-bg: rgba(77, 148, 255, 0.15);
-  --temp-5-10-bg: rgba(0, 102, 255, 0.15);
-  --temp-0-5-bg: rgba(0, 82, 204, 0.15);
-  --temp-below-0-bg: rgba(0, 61, 153, 0.15);
+  /* Extended temperature backgrounds - Lighter tints for light theme */
+  --temp-40-plus-bg: rgba(255, 0, 0, 0.08);
+  --temp-35-40-bg: rgba(255, 77, 77, 0.08);
+  --temp-30-35-bg: rgba(255, 107, 61, 0.08);
+  --temp-25-30-bg: rgba(255, 140, 26, 0.08);
+  --temp-20-25-bg: rgba(255, 165, 0, 0.08);
+  --temp-15-20-bg: rgba(59, 130, 246, 0.08);
+  --temp-10-15-bg: rgba(77, 148, 255, 0.08);
+  --temp-5-10-bg: rgba(0, 102, 255, 0.08);
+  --temp-0-5-bg: rgba(0, 82, 204, 0.08);
+  --temp-below-0-bg: rgba(0, 61, 153, 0.08);
   
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.36);
+  /* Glassmorphism for Light Theme */
+  --glass-bg: rgba(255, 255, 255, 0.6); /* More opaque white */
+  --glass-border: rgba(0, 0, 0, 0.1); /* Subtle dark border */
+  --glass-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.1); /* Softer shadow */
   
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -59,7 +59,8 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg));
+  /* background: linear-gradient(135deg, var(--primary-bg), var(--secondary-bg)); */
+  background-color: var(--primary-bg); /* Simpler background for light theme */
   color: var(--primary-text);
   min-height: 100vh;
   line-height: 1.6;
