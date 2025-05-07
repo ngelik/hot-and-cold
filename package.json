@@ -10,9 +10,10 @@
     "preview": "vite preview",
     "start": "vite --host",
     "predeploy": "pnpm run build",
-    "deploy": "gh-pages -d dist"    
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
