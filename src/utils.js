@@ -1,5 +1,5 @@
 // src/utils.js
-import { supabase } from './supabaseClient'; // Import the supabase client
+import { supabase } from './supabaseClient.js'; // Import the supabase client
 
 // Helper functions for temperature conversion (keep as is)
 const celsiusToFahrenheit = (celsius) => (celsius * 9/5) + 32;
