@@ -37,10 +37,6 @@ function App() {
     loadCities();
   }, []);
 
-  const getCurrentTime = () => {
-    return new Date().toLocaleString();
-  };
-
   if (loading) {
     return (
       <div className="loading">
@@ -54,7 +50,6 @@ function App() {
       <header>
         <h1>🌡️ Global Temperature Extremes</h1>
         <p>Monitoring the hottest and coldest places on Earth by region</p>
-        <p className="last-updated">Last updated: {getCurrentTime()}</p>
       </header>
 
       {error ? (
@@ -70,14 +65,12 @@ function App() {
                   <h3 className="city-name">{cities[region]?.hottest.name}</h3>
                   <p className="city-info">{cities[region]?.hottest.country}</p>
                   <div className="temperature">{Math.round(cities[region]?.hottest.temperature)}°C</div>
-                  <p className="city-info">Updated: {cities[region]?.hottest.time}</p>
                 </div>
                 <div className={`city-card cold ${getTemperatureClass(cities[region]?.coldest.temperature)}`}>
                   <div className="extreme-label">❄️ Coldest</div>
                   <h3 className="city-name">{cities[region]?.coldest.name}</h3>
                   <p className="city-info">{cities[region]?.coldest.country}</p>
                   <div className="temperature">{Math.round(cities[region]?.coldest.temperature)}°C</div>
-                  <p className="city-info">Updated: {cities[region]?.coldest.time}</p>
                 </div>
               </div>
             </section>

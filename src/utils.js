@@ -16,7 +16,7 @@ export const REGIONS = {
 };
 
 // Cache constants
-const SUPABASE_CACHE_KEY = 'global_temperature_extremes_data'; // Primary key for our cache row
+const SUPABASE_CACHE_KEY = 'global_temperature_extremes_data';
 const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
 // List of cities (keep MAJOR_CITIES as is)
@@ -357,7 +357,7 @@ export const fetchMajorCities = async () => {
   return MAJOR_CITIES;
 };
 
-// Updated function to get cached data from Supabase
+// Function to get cached data (now uses Supabase)
 const getCachedData = async () => {
   if (!supabase) {
     console.warn('Supabase client not initialized. Skipping cache.');
@@ -368,26 +368,20 @@ const getCachedData = async () => {
       .from('temperature_cache')
       .select('payload, cached_at')
       .eq('cache_key', SUPABASE_CACHE_KEY)
-      .single(); // We expect only one row for this cache key
+      .single();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116: ' exactement une ligne attendue, mais 0 lignes trouvées ' (means no row found, which is fine)
+    if (error && error.code !== 'PGRST116') {
       console.error('Error fetching cache from Supabase:', error);
       return null;
     }
-
     if (!data) return null;
-
     const { payload, cached_at } = data;
     const cacheTimestamp = new Date(cached_at).getTime();
     const now = new Date().getTime();
-
     if (now - cacheTimestamp > CACHE_DURATION) {
       console.log('Supabase cache expired');
-      // Optionally, you could delete the expired cache item here
-      // await supabase.from('temperature_cache').delete().eq('cache_key', SUPABASE_CACHE_KEY);
       return null;
     }
-
     console.log('Using data from Supabase cache');
     return payload;
   } catch (error) {
@@ -396,7 +390,7 @@ const getCachedData = async () => {
   }
 };
 
-// Updated function to set cached data in Supabase
+// Function to set cached data (now uses Supabase)
 const setCachedData = async (dataToCache) => {
   if (!supabase) {
     console.warn('Supabase client not initialized. Skipping cache update.');
@@ -408,9 +402,8 @@ const setCachedData = async (dataToCache) => {
       .upsert({
         cache_key: SUPABASE_CACHE_KEY,
         payload: dataToCache,
-        cached_at: new Date().toISOString(), // Store as ISO string (TIMESTAMPTZ)
+        cached_at: new Date().toISOString(),
       });
-
     if (error) {
       console.error('Error saving cache to Supabase:', error);
     } else {
@@ -455,83 +448,61 @@ export const fetchCityTemperature = async (city) => {
 export const getTemperaturesWithCache = async () => {
   try {
     // Try to get cached data first
-    const cachedData = await getCachedData(); // Now an async function
+    const cachedData = await getCachedData();
     if (cachedData) {
       return cachedData;
     }
-
     // If no cache or cache expired, fetch fresh data
     console.log('Fetching fresh temperature data from API');
     const cities = await fetchMajorCities();
-    
-    // Fetch temperatures for all cities. Consider rate limits if API has them.
-    // Using Promise.allSettled to ensure all requests complete, even if some fail.
     const cityTempPromises = cities.map(city => fetchCityTemperature(city).catch(e => ({ ...city, error: e.message, temperature: null })));
     const results = await Promise.allSettled(cityTempPromises);
-
     const citiesWithTemp = results
       .filter(result => result.status === 'fulfilled' && result.value.temperature !== null)
       .map(result => result.value);
-    
     const failedFetches = results.filter(result => result.status === 'rejected' || (result.status === 'fulfilled' && result.value.temperature === null));
     if (failedFetches.length > 0) {
-        console.warn(`Failed to fetch temperature for ${failedFetches.length} cities.`);
-        // Log details of failed fetches if needed
-        // failedFetches.forEach(fail => console.warn(fail.reason || fail.value.name + " error: " + fail.value.error));
+      console.warn(`Failed to fetch temperature for ${failedFetches.length} cities.`);
     }
     if (citiesWithTemp.length === 0 && cities.length > 0) {
-        throw new Error("Failed to fetch temperature for any city.");
+      throw new Error('Failed to fetch temperature for any city.');
     }
-
-
     // Group cities by region and find extremes
     const groupedExtremes = citiesWithTemp.reduce((acc, city) => {
       if (!acc[city.region]) {
         acc[city.region] = {
-          hottest: { temperature: -Infinity, name: 'N/A', country: '', time: 'N/A' }, // Default values
-          coldest: { temperature: Infinity, name: 'N/A', country: '', time: 'N/A'  }  // Default values
+          hottest: { temperature: -Infinity, name: 'N/A', country: '', time: 'N/A' },
+          coldest: { temperature: Infinity, name: 'N/A', country: '', time: 'N/A' }
         };
       }
-      
-      // Ensure city.temperature is a number before comparison
       const temp = parseFloat(city.temperature);
-      if (isNaN(temp)) return acc; // Skip if temperature is not a valid number
-
+      if (isNaN(temp)) return acc;
       if (temp > acc[city.region].hottest.temperature) {
         acc[city.region].hottest = city;
       }
       if (temp < acc[city.region].coldest.temperature) {
         acc[city.region].coldest = city;
       }
-      
       return acc;
     }, {});
-    
-    // Fill any regions that might not have valid cities after fetching
     Object.values(REGIONS).forEach(regionKey => {
-        if (!groupedExtremes[regionKey]) {
-            groupedExtremes[regionKey] = {
-                hottest: { temperature: -Infinity, name: 'N/A', country: '', time: 'N/A' },
-                coldest: { temperature: Infinity, name: 'N/A', country: '', time: 'N/A'  }
-            };
-        }
-         if (groupedExtremes[regionKey].hottest.temperature === -Infinity) {
-            groupedExtremes[regionKey].hottest = { name: 'Data unavailable', temperature: NaN, country: '', time: '' };
-        }
-        if (groupedExtremes[regionKey].coldest.temperature === Infinity) {
-            groupedExtremes[regionKey].coldest = { name: 'Data unavailable', temperature: NaN, country: '', time: '' };
-        }
+      if (!groupedExtremes[regionKey]) {
+        groupedExtremes[regionKey] = {
+          hottest: { temperature: -Infinity, name: 'N/A', country: '', time: 'N/A' },
+          coldest: { temperature: Infinity, name: 'N/A', country: '', time: 'N/A' }
+        };
+      }
+      if (groupedExtremes[regionKey].hottest.temperature === -Infinity) {
+        groupedExtremes[regionKey].hottest = { name: 'Data unavailable', temperature: NaN, country: '', time: '' };
+      }
+      if (groupedExtremes[regionKey].coldest.temperature === Infinity) {
+        groupedExtremes[regionKey].coldest = { name: 'Data unavailable', temperature: NaN, country: '', time: '' };
+      }
     });
-
-
-    // Cache the results
-    await setCachedData(groupedExtremes); // Now an async function
-    
+    await setCachedData(groupedExtremes);
     return groupedExtremes;
   } catch (error) {
     console.error('Error getting temperatures:', error);
-    // To prevent app crash, return a default structure or rethrow
-    // For now, rethrowing to be handled by the App component
     throw error;
   }
 };
